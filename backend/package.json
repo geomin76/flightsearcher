@@ -1,0 +1,24 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend routes for flight searcher",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geomin76/flightsearcher.git"
+  },
+  "author": "Geo Min",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/geomin76/flightsearcher/issues"
+  },
+  "homepage": "https://github.com/geomin76/flightsearcher#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "request": "^2.88.2",
+    "unirest": "^0.6.0"
+  }
+}
