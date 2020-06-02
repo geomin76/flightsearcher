@@ -48,26 +48,31 @@ app.get('/results', (req, res) => {
 
         if (res.body.Quotes) {
 
-        //     for (var i = 0; i < res.body.Carriers.length; i++) {
-        //         for (var j = 0; j < res.body.Quotes[0].OutboundLeg.CarrierIds.length; j++) {
-        //             if (res.body.Quotes[0].OutboundLeg.CarrierIds[j] == res.body.Carriers[i].CarrierId) {
-        //                 outboundCarriers.push(res.body.Carriers[i].Name);
-        //             }
-        //         }
-        //         for (var j = 0; j < res.body.Quotes[0].InboundLeg.CarrierIds.length; j++) {
-        //             if (res.body.Quotes[0].InboundLeg.CarrierIds[j] == res.body.Carriers[i].CarrierId) { 
-        //                 inboundCarriers.push(res.body.Carriers[i].Name);
-        //             }
-        //         }
-        //     }
-
-
             for (var i = 0; i < res.body.Quotes.length; i++) {
+                var outboundCarriers = [];
+                var inboundCarriers = [];
+
+                //find a more efficient method
+                for (var m = 0; m < res.body.Carriers.length; m++) {
+                    for (var j = 0; j < res.body.Quotes[i].OutboundLeg.CarrierIds.length; j++) {
+                        if (res.body.Quotes[i].OutboundLeg.CarrierIds[j] == res.body.Carriers[m].CarrierId) {
+                            outboundCarriers.push(res.body.Carriers[m].Name);
+                        }
+                    }
+                    for (var j = 0; j < res.body.Quotes[i].InboundLeg.CarrierIds.length; j++) {
+                        if (res.body.Quotes[i].InboundLeg.CarrierIds[j] == res.body.Carriers[m].CarrierId) { 
+                            inboundCarriers.push(res.body.Carriers[m].Name);
+                        }
+                    }
+                }
+
                 var flightInfo = {
                     price: res.body.Quotes[i].MinPrice,
                     direct: res.body.Quotes[i].Direct,
                     outbound: res.body.Quotes[i].OutboundLeg.DepartureDate.substring(0, 10),
-                    inbound: res.body.Quotes[i].InboundLeg.DepartureDate.substring(0, 10)
+                    inbound: res.body.Quotes[i].InboundLeg.DepartureDate.substring(0, 10),
+                    outboundFlight: outboundCarriers,
+                    inboundFlight: inboundCarriers
                 }
                 results.push(flightInfo);
             }
@@ -78,6 +83,8 @@ app.get('/results', (req, res) => {
 
         results.sort((a, b) => (a.price) - (b.price))
         console.log(results);
+
+        //add all queries to results, then cut off to only 15 cheapest flights
         
     });
     res.send("WOO");
