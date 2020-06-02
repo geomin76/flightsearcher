@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LocationService } from '../location.service';
 
 @Component({
   selector: 'app-query',
@@ -7,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class QueryComponent implements OnInit {
 
-  constructor() { }
+  constructor(private _locationService: LocationService) { }
+
+  // public gps = [];
 
   ngOnInit(): void {
+    // this.gps = this._locationService.getLocation();
+    // console.log(this.gps);
   }
 
 }
