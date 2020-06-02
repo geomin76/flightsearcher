@@ -4,6 +4,7 @@ var secrets = require('./secrets.js');
 const request = require('request');
 var unirest = require("unirest");
 
+
 app.get('/', (req, res) => {
 
     console.log(req.query.inbound);
@@ -25,6 +26,10 @@ app.get('/results', (req, res) => {
 
     // http://localhost:3000/results?origin=JFK&destination=SFO&outbound=2020-09-15&inbound=2020-10-15
 
+    //select a month/year of travel, sort 10-20 lowest prices + dates from airports nearest you
+
+    //sorting algorithm through pricing
+
     //getting flight quote data from SkyScanner Flight API
     var url = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/US/USD/en-US/" 
     + req.query.origin + "/" + req.query.destination + "/" + req.query.outbound + "/" + req.query.inbound
@@ -41,39 +46,38 @@ app.get('/results', (req, res) => {
     req.end(function (res) {
         if (res.error) throw new Error(res.error);
 
-        //if quotes even exist
-        if (res.body.Quotes[0]) {
+        if (res.body.Quotes) {
 
-            var outboundCarriers = [];
-            var inboundCarriers = [];
-            
-            //getting carrier names from outbound + inbound legs
-            for (var i = 0; i < res.body.Carriers.length; i++) {
-                for (var j = 0; j < res.body.Quotes[0].OutboundLeg.CarrierIds.length; j++) {
-                    if (res.body.Quotes[0].OutboundLeg.CarrierIds[j] == res.body.Carriers[i].CarrierId) {
-                        outboundCarriers.push(res.body.Carriers[i].Name);
-                    }
-                }
-                for (var j = 0; j < res.body.Quotes[0].InboundLeg.CarrierIds.length; j++) {
-                    if (res.body.Quotes[0].InboundLeg.CarrierIds[j] == res.body.Carriers[i].CarrierId) { 
-                        inboundCarriers.push(res.body.Carriers[i].Name);
-                    }
-                }
-            }
+        //     for (var i = 0; i < res.body.Carriers.length; i++) {
+        //         for (var j = 0; j < res.body.Quotes[0].OutboundLeg.CarrierIds.length; j++) {
+        //             if (res.body.Quotes[0].OutboundLeg.CarrierIds[j] == res.body.Carriers[i].CarrierId) {
+        //                 outboundCarriers.push(res.body.Carriers[i].Name);
+        //             }
+        //         }
+        //         for (var j = 0; j < res.body.Quotes[0].InboundLeg.CarrierIds.length; j++) {
+        //             if (res.body.Quotes[0].InboundLeg.CarrierIds[j] == res.body.Carriers[i].CarrierId) { 
+        //                 inboundCarriers.push(res.body.Carriers[i].Name);
+        //             }
+        //         }
+        //     }
 
-            //creating object with price, direct flight or not, and carrier names
-            var flightInfo = {
-                price: res.body.Quotes[0].MinPrice,
-                direct: res.body.Quotes[0].Direct,
-                outbound: outboundCarriers,
-                inbound: inboundCarriers
+
+            for (var i = 0; i < res.body.Quotes.length; i++) {
+                var flightInfo = {
+                    price: res.body.Quotes[i].MinPrice,
+                    direct: res.body.Quotes[i].Direct,
+                    outbound: res.body.Quotes[i].OutboundLeg.DepartureDate.substring(0, 10),
+                    inbound: res.body.Quotes[i].InboundLeg.DepartureDate.substring(0, 10)
+                }
+                results.push(flightInfo);
             }
-            results.push(flightInfo);
-            console.log(flightInfo);
         }
         else {
-            console.log("None")
+            console.log("No flight(s) available")
         }
+
+        results.sort((a, b) => (a.price) - (b.price))
+        console.log(results);
         
     });
     res.send("WOO");
