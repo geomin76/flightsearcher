@@ -1,23 +1,43 @@
 const express = require('express');
 const app = express();
 var secrets = require('./secrets.js');
+var service = require("./service");
 const request = require('request');
 var unirest = require("unirest");
 const { MongoClient } = require('mongodb');
+var GeoJSON = require('geojson');
+
+const fs = require('fs')
+const readLine = require('readline')
 
 
 const connectionString = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@" + secrets.cluster + "/test?retryWrites=true&w=majority"
 MongoClient.connect(connectionString, { useUnifiedTopology: true })
   .then(client => {
     console.log('Connected to Database')
-    const db = client.db('airport')
-    const airportData = db.collection('airportdata')
+    const db = client.db('airport');
 
-    //do data submission here once, where airportname, airport code, gps coordinates
+    // service.getData(db, "airportdata")
 
-    //can set apis here
+    // db.collection("airportdata").createIndex( { location: "2dsphere" } )
 
-  })
+    //lng, lat for GPS coordinates
+    db.collection("airportdata").find(
+        {
+          "location":
+            { $near:
+               {
+                 $geometry: { type: "Point",  coordinates: [ -80.947529, 35.213956 ] },
+                 $maxDistance: 200000
+               }
+            }
+        }
+     ).limit(5).toArray((err, result) => {
+         console.log(result)
+     })
+
+})
+
 
 
 app.get('/', (req, res) => {
