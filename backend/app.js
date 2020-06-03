@@ -6,34 +6,18 @@ var unirest = require("unirest");
 const { MongoClient } = require('mongodb');
 
 
-async function main() {
-    const uri = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@" + secrets.cluster + "/test?retryWrites=true&w=majority"
-    const client = new MongoClient(uri);
-    try {
-        // Connect to the MongoDB cluster
-        await client.connect();
-        // Make the appropriate DB calls
-        await listDatabases(client);
-    } catch (e) {
-        console.error(e);
-    } finally {
-        await client.close();
-    }
-}
+const connectionString = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@" + secrets.cluster + "/test?retryWrites=true&w=majority"
+MongoClient.connect(connectionString, { useUnifiedTopology: true })
+  .then(client => {
+    console.log('Connected to Database')
+    const db = client.db('airport')
+    const airportData = db.collection('airportdata')
 
-main().catch(console.error);
+    //do data submission here once, where airportname, airport code, gps coordinates
 
-async function listDatabases(client){
-    databasesList = await client.db().admin().listDatabases();
- 
-    console.log("Databases:");
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-};
+    //can set apis here
 
-async function createItem(client, newItems) {
-    const results = await client.db("airport").collection("airportdata").insertMany(newItems);
-}
-
+  })
 
 
 app.get('/', (req, res) => {
