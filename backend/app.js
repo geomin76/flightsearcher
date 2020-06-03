@@ -7,7 +7,7 @@ const { MongoClient } = require('mongodb');
 
 
 async function main() {
-    const uri = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@cluster0-wrh6y.azure.mongodb.net/test?retryWrites=true&w=majority"
+    const uri = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@" + secrets.cluster + "/test?retryWrites=true&w=majority"
     const client = new MongoClient(uri);
     try {
         // Connect to the MongoDB cluster
@@ -29,6 +29,10 @@ async function listDatabases(client){
     console.log("Databases:");
     databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 };
+
+async function createItem(client, newItems) {
+    const results = await client.db("airport").collection("airportdata").insertMany(newItems);
+}
 
 
 
