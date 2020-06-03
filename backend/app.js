@@ -3,6 +3,33 @@ const app = express();
 var secrets = require('./secrets.js');
 const request = require('request');
 var unirest = require("unirest");
+const { MongoClient } = require('mongodb');
+
+
+async function main() {
+    const uri = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@cluster0-wrh6y.azure.mongodb.net/test?retryWrites=true&w=majority"
+    const client = new MongoClient(uri);
+    try {
+        // Connect to the MongoDB cluster
+        await client.connect();
+        // Make the appropriate DB calls
+        await listDatabases(client);
+    } catch (e) {
+        console.error(e);
+    } finally {
+        await client.close();
+    }
+}
+
+main().catch(console.error);
+
+async function listDatabases(client){
+    databasesList = await client.db().admin().listDatabases();
+ 
+    console.log("Databases:");
+    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+};
+
 
 
 app.get('/', (req, res) => {
@@ -27,8 +54,6 @@ app.get('/results', (req, res) => {
     // http://localhost:3000/results?origin=JFK&destination=SFO&outbound=2020-09-15&inbound=2020-10-15
 
     //select a month/year of travel, sort 10-20 lowest prices + dates from airports nearest you
-
-    //sorting algorithm through pricing
 
     //getting flight quote data from SkyScanner Flight API
     var url = "https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/US/USD/en-US/" 
