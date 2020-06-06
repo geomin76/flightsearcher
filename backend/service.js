@@ -1,8 +1,10 @@
 const fetch = require("node-fetch");
-const request = require('request');
 var secrets = require('./secrets.js');
+const fs = require('fs')
+const readLine = require('readline')
 
 // parsing txt file and obtaining airport data (Name, IATA code, GPS coordinates)
+//all this data is passed into a mongodb database
 async function getData(db, collectionName) {
     var allData = [];
     const fileStream = fs.createReadStream('data.txt');
