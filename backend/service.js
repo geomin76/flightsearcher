@@ -1,3 +1,7 @@
+const fetch = require("node-fetch");
+const request = require('request');
+var secrets = require('./secrets.js');
+
 // parsing txt file and obtaining airport data (Name, IATA code, GPS coordinates)
 async function getData(db, collectionName) {
     var allData = [];
@@ -20,3 +24,62 @@ async function getData(db, collectionName) {
     }
     console.log("done")
 }
+
+
+function getFlightData(results, urls, destination, outbound, inbound) {
+  
+    //optimize this method, not great efficiency rn
+    Promise.all(urls.map(url => fetch(url, {method: 'GET', headers: requiredHeaders})))
+    .then(responses => 
+        Promise.all(responses.map(res => res.json())))
+        .then(texts => {
+            for (var i = 0; i < texts.length; i++) {
+                if (texts[i].Quotes) {                    
+                    for (var j = 0; j < texts[i].Quotes.length; j++) {
+                        var outboundCarriers = [];
+                        var inboundCarriers = [];
+
+                        //do method for finding origin/destination, same method as carriers
+        
+                        //find a more efficient method
+                        for (var m = 0; m < texts[i].Carriers.length; m++) {
+                            for (var k = 0; k < texts[i].Quotes[j].OutboundLeg.CarrierIds.length; k++) {
+                                if (texts[i].Quotes[j].OutboundLeg.CarrierIds[k] == texts[i].Carriers[m].CarrierId) {
+                                    outboundCarriers.push(texts[i].Carriers[m].Name);
+                                }
+                            }
+                            for (var k = 0; k < texts[i].Quotes[j].InboundLeg.CarrierIds.length; k++) {
+                                if (texts[i].Quotes[j].InboundLeg.CarrierIds[k] == texts[i].Carriers[m].CarrierId) { 
+                                    inboundCarriers.push(texts[i].Carriers[m].Name);
+                                }
+                            }
+                        }
+        
+                        var flightInfo = {
+                            price: texts[i].Quotes[j].MinPrice,
+                            direct: texts[i].Quotes[j].Direct,
+                            outbound: texts[i].Quotes[j].OutboundLeg.DepartureDate.substring(0, 10),
+                            inbound: texts[i].Quotes[j].InboundLeg.DepartureDate.substring(0, 10),
+                            outboundFlight: outboundCarriers,
+                            inboundFlight: inboundCarriers,
+                            // origin: origin,
+                            // destination: destination
+                        }
+                        results.push(flightInfo);
+                    }
+                }
+                else {
+                    console.log("No flights available")
+                }
+            }
+            results.sort((a, b) => (a.price) - (b.price))
+            console.log(results);
+            return results
+        })
+
+        //do a catch method so no errors
+
+}
+
+
+module.exports = {getFlightData}
