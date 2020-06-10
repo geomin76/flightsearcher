@@ -6,6 +6,7 @@ const { MongoClient } = require('mongodb');
 var GeoJSON = require('geojson');
 
 
+
 app.get('/', (req, res) => {
     res.send("Hello, World!")
 })
@@ -20,14 +21,17 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     // service.getData(db, "airportdata")
 
-    //http://localhost:3000/query?lng=-76.795915&lat=37.408109
-    
+    // http://localhost:3000/query?lng=-118.411738&lat=33.940681
 
-    app.get('/query', (req, res) => {
+    // http://localhost:3000/results?lng=-77.018727&lat=38.859887&destination=LAX&outbound=2020-10&inbound=2020-10
 
-        // this "2dsphere" indexing allows distance to be calculated by sphere distance rather than straight line distance
-        // db.collection("airportdata").createIndex( { location: "2dsphere" } )
 
+
+
+    app.get('/results', (req, res) => {
+
+        var results = [];
+        var codes = [];
         db.collection("airportdata").find(
             {
             "location":
@@ -40,45 +44,31 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
             }
         ).limit(5).toArray((err, result) => {
             for (var i = 0; i < result.length; i++) {
-                // codes.push(result[i].code)
+                codes.push(result[i].code)
             }
-            console.log(result)
-        })
-        res.send("works")
+
+            var destination = req.query.destination;
+            var outbound = req.query.outbound;
+            var inbound = req.query.inbound;
+        
+            var urls = [];
+        
+            for (var i = 0; i < codes.length; i++) {
+                urls.push(("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/US/USD/en-US/" 
+                    + codes[i] + "/" + destination + "/" + outbound + "/" + inbound))
+            }
+            requiredHeaders = {
+                "x-rapidapi-host": "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
+                "x-rapidapi-key": secrets.key,
+                "useQueryString": true
+            }
+            res.send("WOO");
+        
+            return service.getFlightData(urls, destination, outbound, inbound)
+        })    
     })
 
 })
-
-
-// http://localhost:3000/results?destination=LAX&outbound=2020-10&inbound=2020-10
-
-app.get('/results', (req, res) => {
-
-    var results = [];
-
-    //now need to pass params from query api -> results api and pass it to the for loop below
-    codes = ["IAD", "BWI", "ATL"]
-    var destination = req.query.destination;
-    var outbound = req.query.outbound;
-    var inbound = req.query.inbound;
-
-    var urls = [];
-
-    for (var i = 0; i < codes.length; i++) {
-        urls.push(("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/browsequotes/v1.0/US/USD/en-US/" 
-            + codes[i] + "/" + destination + "/" + outbound + "/" + inbound))
-    }
-    requiredHeaders = {
-        "x-rapidapi-host": "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
-        "x-rapidapi-key": secrets.key,
-        "useQueryString": true
-    }
-    res.send("WOO");
-
-    return service.getFlightData(results, urls, destination, outbound, inbound)
-
-})
-
 
 
 const PORT = process.env.PORT || 3000;

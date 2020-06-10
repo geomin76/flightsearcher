@@ -28,7 +28,30 @@ async function getData(db, collectionName) {
 }
 
 
-function getFlightData(results, urls, destination, outbound, inbound) {
+function getAirports(db, lng, lat) {
+    var codes = [];
+    db.collection("airportdata").find(
+        {
+        "location":
+            { $near:
+            {
+                $geometry: { type: "Point",  coordinates: [ parseFloat(lng), parseFloat(lat) ] },
+                $maxDistance: 200000
+            }
+            }
+        }
+    ).limit(5).toArray((err, result) => {
+        for (var i = 0; i < result.length; i++) {
+            codes.push(result[i].code)
+        }
+        return codes
+    })
+}
+
+
+function getFlightData(urls, destination, outbound, inbound) {
+
+    var results = [];
   
     //optimize this method, not great efficiency rn
     Promise.all(urls.map(url => fetch(url, {method: 'GET', headers: requiredHeaders})))
@@ -36,7 +59,7 @@ function getFlightData(results, urls, destination, outbound, inbound) {
         Promise.all(responses.map(res => res.json())))
         .then(texts => {
             for (var i = 0; i < texts.length; i++) {
-                if (texts[i].Quotes) {                    
+                if (texts[i].Quotes) {               
                     for (var j = 0; j < texts[i].Quotes.length; j++) {
                         var outboundCarriers = [];
                         var inboundCarriers = [];
@@ -84,4 +107,4 @@ function getFlightData(results, urls, destination, outbound, inbound) {
 }
 
 
-module.exports = {getFlightData}
+module.exports = {getFlightData, getAirports}
