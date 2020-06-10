@@ -17,9 +17,12 @@ async function getData(db, collectionName) {
     for await (const line of rl) {
       var res = line.split(",");
 
+
       db.collection(collectionName).insert({
             name: res[3],
             code: res[13],
+            city: res[10],
+            countryCode: res[8],
             location: { type: "Point", coordinates: [ parseFloat(res[5]), parseFloat(res[4]) ] }
       })
 
@@ -98,8 +101,9 @@ function getFlightData(urls, destination, outbound, inbound) {
                 }
             }
             results.sort((a, b) => (a.price) - (b.price))
-            console.log(results);
-            return results
+            console.log(results.slice(0, 15));
+            //only gets first 15 results
+            return results.slice(0, 15)
         })
 
         //do a catch method so no errors
@@ -107,4 +111,4 @@ function getFlightData(urls, destination, outbound, inbound) {
 }
 
 
-module.exports = {getFlightData, getAirports}
+module.exports = {getFlightData, getAirports, getData}

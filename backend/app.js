@@ -6,6 +6,9 @@ const { MongoClient } = require('mongodb');
 var GeoJSON = require('geojson');
 
 
+const fs = require('fs')
+const readLine = require('readline')
+
 
 app.get('/', (req, res) => {
     res.send("Hello, World!")
@@ -21,11 +24,11 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     // service.getData(db, "airportdata")
 
-    // http://localhost:3000/query?lng=-118.411738&lat=33.940681
+    // this "2dsphere" indexing allows distance to be calculated by sphere distance rather than straight line distance
+    // db.collection("airportdata").createIndex( { location: "2dsphere" } )
+
 
     // http://localhost:3000/results?lng=-77.018727&lat=38.859887&destination=LAX&outbound=2020-10&inbound=2020-10
-
-
 
 
     app.get('/results', (req, res) => {
