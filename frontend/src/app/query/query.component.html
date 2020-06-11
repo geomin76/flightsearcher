@@ -3,7 +3,24 @@
         <h1 class="display-4">Hello, world!</h1>
     </div>
     <div class="xl-12 lg-12 md-12 sm-12">
-        Query
+        <form #flightForm="ngForm">
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location" class="form-control" ngModel>
+            </div>
+            <div class="form-group">
+                <label>Airport destination</label>
+                <input type="text" name="destination" class="form-control" ngModel>
+            </div>
+            <div class="form-group">
+                <label>Month and year of travel</label>
+                <!-- pass values from angular to get current date -->
+                <input type="month" name="time" class="form-control" min="2020-06" max="2021-06" ngModel>
+            </div>
+            <div>
+                <button class="btn btn-primary" type="submit">Search for flights</button>
+            </div>
+        </form>
     </div>
 </div>
 
