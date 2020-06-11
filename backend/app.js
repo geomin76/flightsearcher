@@ -4,11 +4,14 @@ var secrets = require('./secrets.js');
 var service = require("./service");
 const { MongoClient } = require('mongodb');
 var GeoJSON = require('geojson');
+var cors = require('cors')
+const fetch = require("node-fetch");
 
 
-const fs = require('fs')
-const readLine = require('readline')
+// const fs = require('fs')
+// const readLine = require('readline')
 
+app.use(cors())
 
 app.get('/', (req, res) => {
     res.send("Hello, World!")
@@ -33,7 +36,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     app.get('/results', (req, res) => {
 
-        var results = [];
+        // var results = [];
         var codes = [];
         db.collection("airportdata").find(
             {
@@ -65,9 +68,57 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                 "x-rapidapi-key": secrets.key,
                 "useQueryString": true
             }
-            res.send("WOO");
+
+            var results = [];
+  
+            //optimize this method, not great efficiency rn
+            Promise.all(urls.map(url => fetch(url, {method: 'GET', headers: requiredHeaders})))
+            .then(responses => 
+                Promise.all(responses.map(res => res.json())))
+                .then(texts => {
+                    for (var i = 0; i < texts.length; i++) {
+                        if (texts[i].Quotes) {               
+                            for (var j = 0; j < texts[i].Quotes.length; j++) {
+                                var outboundCarriers = [];
+                                var inboundCarriers = [];
         
-            return service.getFlightData(urls, destination, outbound, inbound)
+                                //do method for finding origin/destination, same method as carriers
+                
+                                //find a more efficient method
+                                for (var m = 0; m < texts[i].Carriers.length; m++) {
+                                    for (var k = 0; k < texts[i].Quotes[j].OutboundLeg.CarrierIds.length; k++) {
+                                        if (texts[i].Quotes[j].OutboundLeg.CarrierIds[k] == texts[i].Carriers[m].CarrierId) {
+                                            outboundCarriers.push(texts[i].Carriers[m].Name);
+                                        }
+                                    }
+                                    for (var k = 0; k < texts[i].Quotes[j].InboundLeg.CarrierIds.length; k++) {
+                                        if (texts[i].Quotes[j].InboundLeg.CarrierIds[k] == texts[i].Carriers[m].CarrierId) { 
+                                            inboundCarriers.push(texts[i].Carriers[m].Name);
+                                        }
+                                    }
+                                }
+                
+                                var flightInfo = {
+                                    price: texts[i].Quotes[j].MinPrice,
+                                    direct: texts[i].Quotes[j].Direct,
+                                    outbound: texts[i].Quotes[j].OutboundLeg.DepartureDate.substring(0, 10),
+                                    inbound: texts[i].Quotes[j].InboundLeg.DepartureDate.substring(0, 10),
+                                    outboundFlight: outboundCarriers,
+                                    inboundFlight: inboundCarriers,
+                                    // origin: origin,
+                                    // destination: destination
+                                }
+                                results.push(flightInfo);
+                            }
+                        }
+                        else {
+                            console.log("No flights available")
+                        }
+                    }
+                    results.sort((a, b) => (a.price) - (b.price))
+                    // console.log(results.slice(0, 15));
+                    res.json(results.slice(0, 15))
+                })
         })    
     })
 

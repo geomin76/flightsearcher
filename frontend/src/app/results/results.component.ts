@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DatarequestService } from '../datarequest.service';
+
 
 @Component({
   selector: 'app-results',
@@ -7,9 +9,15 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ResultsComponent implements OnInit {
 
-  constructor() { }
+  public flights = [];
+
+  constructor(private dataService: DatarequestService) { }
 
   ngOnInit(): void {
+    this.dataService.getFlights().subscribe((data: any[]) => {
+      console.log(data);
+      this.flights = data;
+    })
   }
 
 }
