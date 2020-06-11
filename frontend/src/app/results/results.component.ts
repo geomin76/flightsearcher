@@ -15,7 +15,10 @@ export class ResultsComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataService.getFlights().subscribe((data: any[]) => {
-      console.log(data);
+      // data.forEach(element => {
+      //   console.log(element.price);
+      // });
+      // console.log(data);
       this.flights = data;
     })
   }
