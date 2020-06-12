@@ -15,13 +15,11 @@ export class QueryComponent implements OnInit {
 
   constructor(private dataService : DatarequestService, private router: Router) { }
 
-  // public gps = [];
 
   ngOnInit(): void {
-    // this.gps = this._locationService.getLocation();
-    // console.log(this.gps);
   }
 
+  //need loading screen
   onSubmit() {
     // console.log(this.searchModel);
     this.dataService.getFlights("-77.018727", "38.859887", this.searchModel.destination, this.searchModel.time).subscribe((data: any[]) => {

@@ -3,7 +3,17 @@
         <h1 class="display-4">Hello, world!</h1>
     </div>
     <div class="xl-12 lg-12 md-12 sm-12">
-        {{flights | json}}
+        <div *ngIf="flights.length > 0; then thenBlock; else elseBlock">
+        </div>
+        <ng-template #thenBlock>
+            <ul *ngFor = "let flight of flights">
+                <li>Price: {{flight.price}} | Date: {{flight.outbound}} - {{flight.inbound}}</li>
+            </ul>
+        </ng-template>
+        <ng-template #elseBlock>
+            <p>No flights available</p>
+        </ng-template>
     </div>
+    <button class="btn btn-primary" routerLink="/query">Back to main menu</button>
 </div>
 
