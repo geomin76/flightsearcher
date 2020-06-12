@@ -14,13 +14,8 @@ export class ResultsComponent implements OnInit {
   constructor(private dataService: DatarequestService) { }
 
   ngOnInit(): void {
-    this.dataService.getFlights().subscribe((data: any[]) => {
-      // data.forEach(element => {
-      //   console.log(element.price);
-      // });
-      // console.log(data);
-      this.flights = data;
-    })
+    this.flights = this.dataService.flights
+    console.log(this.flights);
   }
 
 }

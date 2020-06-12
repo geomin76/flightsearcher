@@ -6,12 +6,13 @@ import { HttpClient } from '@angular/common/http';
 })
 export class DatarequestService {
 
-  private url = "http://localhost:3000/results?lng=-77.018727&lat=38.859887&destination=LAX&outbound=2020-10&inbound=2020-10";
+  public flights = [];
 
   constructor(private http: HttpClient) { }
 
-  public getFlights() {
-    return this.http.get(this.url);
+  public getFlights(lng, lat, destination, date) {
+    var url = "http://localhost:3000/results?lng=" + lng + "&lat=" + lat + "&destination=" + destination + "&outbound=" + date +"&inbound=" + date;
+    return this.http.get(url);
   }
 
 }

@@ -4,14 +4,13 @@
     </div>
     <div class="xl-12 lg-12 md-12 sm-12">
         <form #flightForm="ngForm"(ngSubmit)="onSubmit()">
-            {{searchModel | json}}
             <div class="form-group">
                 <label>Location</label>
-                <input type="text" name="location" class="form-control" [(ngModel)]="searchModel.location">
+                <input type="text" name="location" class="form-control" [(ngModel)]="searchModel.location" placeholder="Raleigh, North Carolina">
             </div>
             <div class="form-group">
                 <label>Airport destination</label>
-                <input type="text" name="destination" class="form-control" [(ngModel)]="searchModel.destination">
+                <input type="text" name="destination" class="form-control" [(ngModel)]="searchModel.destination" placeholder="LAX">
             </div>
             <div class="form-group">
                 <label>Month and year of travel</label>
