@@ -33,6 +33,13 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     // http://localhost:3000/results?lng=-77.018727&lat=38.859887&destination=LAX&outbound=2020-10&inbound=2020-10
 
+    //need to add airport origin and destination to data 
+
+    //need to create live search for mongodb in order to get live search
+
+    // app.get('/search', (req, res) => {
+
+    // })
 
     app.get('/results', (req, res) => {
 
@@ -97,6 +104,22 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                                         }
                                     }
                                 }
+
+                                var originId = texts[i].Quotes[j].OutboundLeg.OriginId;
+                                var destId = texts[i].Quotes[j].OutboundLeg.DestinationId;
+                                var originName = "";
+                                var destinationName = "";
+
+                                for (var p = 0; p < texts[i].Places.length; p++) {
+                                    if (texts[i].Places[p].PlaceId === originId) {
+                                        originName = texts[i].Places[p].Name + " (" + texts[i].Places[p].IataCode + "), " + texts[i].Places[p].CityName
+                                    }
+                                    if (texts[i].Places[p].PlaceId === destId) {
+                                        destinationName = texts[i].Places[p].Name + " (" + texts[i].Places[p].IataCode + "), " + texts[i].Places[p].CityName
+                                    }
+                                }
+                                
+                                
                 
                                 var flightInfo = {
                                     price: texts[i].Quotes[j].MinPrice,
@@ -105,19 +128,28 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                                     inbound: texts[i].Quotes[j].InboundLeg.DepartureDate.substring(0, 10),
                                     outboundFlight: outboundCarriers,
                                     inboundFlight: inboundCarriers,
-                                    // origin: origin,
-                                    // destination: destination
+                                    origin: originName,
+                                    destination: destinationName
                                 }
                                 results.push(flightInfo);
                             }
                         }
                         else {
-                            console.log("No flights available")
+
+                            console.log("none")
                         }
                     }
-                    results.sort((a, b) => (a.price) - (b.price))
-                    // console.log(results.slice(0, 15));
-                    res.json(results.slice(0, 15))
+
+                    if (results.length === 0) {
+                        res.json({
+                            data: "none"
+                        })
+                    }
+                    else {
+                        results.sort((a, b) => (a.price) - (b.price))
+                        // console.log(results.slice(0, 15));
+                        res.json(results.slice(0, 15))
+                    }
                 })
         })    
     })

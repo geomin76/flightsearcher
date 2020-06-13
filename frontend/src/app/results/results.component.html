@@ -7,7 +7,17 @@
         </div>
         <ng-template #thenBlock>
             <ul *ngFor = "let flight of flights">
-                <li>Price: {{flight.price}} | Date: {{flight.outbound}} - {{flight.inbound}}</li>
+                <li>
+                    <p>{{flight.origin}} -> {{flight.destination}}</p>
+                    <p>Price: {{flight.price}} | Date: {{flight.outbound}} - {{flight.inbound}}</p>
+                    <div *ngFor = "let outbound of flight.outboundFlight">
+                        <p>Airline there: {{outbound}}</p>
+                    </div>
+                    <div *ngFor = "let inbound of flight.inboundFlight">
+                        <p>Airline back: {{inbound}}</p>
+                    </div>
+                    <br>
+                </li>
             </ul>
         </ng-template>
         <ng-template #elseBlock>
