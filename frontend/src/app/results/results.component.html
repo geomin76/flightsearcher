@@ -19,11 +19,12 @@
                     <br>
                 </li>
             </ul>
+            <button class="btn btn-primary" routerLink="/query">Back to main menu</button>
         </ng-template>
         <ng-template #elseBlock>
-            <p>No flights available</p>
+            <h2>No flights available</h2>
+            <button class="btn btn-primary" routerLink="/query" routerLinkActive="active">Try another destination!</button>
         </ng-template>
     </div>
-    <button class="btn btn-primary" routerLink="/query">Back to main menu</button>
 </div>
 
