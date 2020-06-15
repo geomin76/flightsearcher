@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { LocationService } from '../location.service';
 import { Search } from '../search';
 import { Router } from '@angular/router';
 import { DatarequestService } from '../datarequest.service';
 import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
 import { DatePipe } from '@angular/common'
-import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
+import { AirportService } from '../airport.service';
 
 @Component({
   selector: 'app-query',
@@ -17,7 +16,7 @@ export class QueryComponent implements OnInit {
 
   searchModel = new Search('', '');
 
-  constructor(private dataService : DatarequestService, private router: Router, private datePipe: DatePipe) { }
+  constructor(private dataService : DatarequestService, private router: Router, private datePipe: DatePipe, private airport: AirportService) { }
 
   public lat = 0;
   public lng = 0;
@@ -25,6 +24,7 @@ export class QueryComponent implements OnInit {
   public currentDate = new Date();
   public preDate = '';
   public postDate = '';
+  
 
   ngOnInit(): void {
     this.preDate = this.datePipe.transform(this.currentDate, 'yyyy-MM');

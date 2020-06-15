@@ -1,25 +1,32 @@
 <div class="container">
     <div class="jumbotron">
-        <h1 class="display-4">Hello, world!</h1>
+        <h3>Cheap flight searcher</h3>
+        <p>This travel tool finds the cheapest flights to a specific destination from airports around you!</p>
+        <p>After typing an origin location, the tool finds airports within a 125 mile radius from you, then searches the cheapest flights to your specified destination and month of travel.</p>
     </div>
     <div class="xl-12 lg-12 md-12 sm-12">
         <form #flightForm="ngForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
                 <label>Location</label>
-                <!-- <input type="text" name="location" class="form-control" [(ngModel)]="searchModel.location" placeholder="Raleigh, North Carolina"> -->
-                <input name="location" class="form-control"  placeholder="Raleigh, North Carolina" ngx-google-places-autocomplete #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)"/>
+                <input name="location" required class="form-control" placeholder="Raleigh, North Carolina" ngx-google-places-autocomplete #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)"/>
             </div>
             <div class="form-group">
                 <label>Airport destination</label>
-                <input type="text" name="destination" class="form-control" [(ngModel)]="searchModel.destination" placeholder="LAX">
+                <input type="text" required name="destination" class="form-control" [(ngModel)]="searchModel.destination" placeholder="LAX">
             </div>
             <div class="form-group">
                 <label>Month and year of travel</label>
-                <!-- pass values from angular to get current date -->
-                <input type="month" name="time" class="form-control" min={{preDate}} max={{postDate}} [(ngModel)]="searchModel.time">
+                <input type="month" required name="time" class="form-control" min={{preDate}} max={{postDate}} [(ngModel)]="searchModel.time">
             </div>
             <div>
-                <button class="btn btn-primary" type="submit">Search for flights</button>
+                <div *ngIf="lat != 0 && lng != 0 && searchModel.destination && searchModel.time; then thenBlock; else elseBlock">
+                </div>
+                <ng-template #thenBlock>
+                    <button class="btn btn-primary" type="submit">Search for flights</button>
+                </ng-template>
+                <ng-template #elseBlock>
+                    <button class="btn btn-primary" disabled type="submit">Search for flights</button>
+                </ng-template>
             </div>
         </form>
     </div>

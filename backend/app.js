@@ -6,6 +6,7 @@ const { MongoClient } = require('mongodb');
 var GeoJSON = require('geojson');
 var cors = require('cors')
 const fetch = require("node-fetch");
+const { json } = require('express');
 
 
 // const fs = require('fs')
@@ -31,19 +32,31 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     // db.collection("airportdata").createIndex( { location: "2dsphere" } )
 
 
-    // http://localhost:3000/results?lng=-77.018727&lat=38.859887&destination=LAX&outbound=2020-10&inbound=2020-10
+    // http://localhost:3000/results?lng=[]&lat=[]&destination=LAX&outbound=2020-10&inbound=2020-10
 
     //need to add airport origin and destination to data 
 
     //need to create live search for mongodb in order to get live search
 
-    // app.get('/search', (req, res) => {
-
-    // })
+    app.get('/search', (req, res) => {
+        db.collection("airportdata").createIndex( { name: "text" } )
+        // db.collection("airportdata").createIndex( { city: "text" } )
+        // db.collection("airportdata").createIndex( { countryCode: "text" } )
+        db.collection("airportdata").find({
+            $text: {
+                $search: req.query.name
+            }
+        }).toArray((err, result) => {
+            res.json(result)
+            console.log(result)
+        })
+        // res.send("done")
+    })
 
     app.get('/results', (req, res) => {
 
         // var results = [];
+        // db.collection("airportdata").createIndex( { location: "2dsphere" } )
         var codes = [];
         db.collection("airportdata").find(
             {
@@ -135,21 +148,13 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                             }
                         }
                         else {
-
                             console.log("none")
                         }
                     }
 
-                    if (results.length === 0) {
-                        res.json({
-                            data: "none"
-                        })
-                    }
-                    else {
-                        results.sort((a, b) => (a.price) - (b.price))
-                        // console.log(results.slice(0, 15));
-                        res.json(results.slice(0, 15))
-                    }
+                    results.sort((a, b) => (a.price) - (b.price))
+                    // console.log(results.slice(0, 15));
+                    res.json(results.slice(0, 15))
                 })
         })    
     })

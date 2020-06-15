@@ -8,6 +8,7 @@ import { AppRoutingModule, routingComponents } from './app-routing.module';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
+import { AirportService } from './airport.service';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,7 @@ import { HttpClientModule } from '@angular/common/http';
     FormsModule,
     GooglePlaceModule
   ],
-  providers: [],
+  providers: [AirportService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
