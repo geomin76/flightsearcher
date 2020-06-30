@@ -14,7 +14,7 @@ import { AirportService } from '../airport.service';
 })
 export class QueryComponent implements OnInit {
 
-  searchModel = new Search('', '');
+  searchModel = new Search('', '', '');
 
   constructor(private dataService : DatarequestService, private router: Router, private datePipe: DatePipe, private airport: AirportService) { }
 
@@ -24,12 +24,29 @@ export class QueryComponent implements OnInit {
   public currentDate = new Date();
   public preDate = '';
   public postDate = '';
+
+  public airportData = {}
   
 
   ngOnInit(): void {
     this.preDate = this.datePipe.transform(this.currentDate, 'yyyy-MM');
     var datesplit = this.preDate.split('-');
     this.postDate = (parseInt(datesplit[0]) + 1).toString() + "-" + datesplit[1]
+  }
+
+  public setQuery(item) {
+    this.searchModel.destination = item.code
+    this.searchModel.holder = item.name
+  }
+
+  public async airportSearch(query) {
+    this.airport.getAirports(query)
+    .subscribe(
+      val => {
+        this.airportData = val
+      }
+      //need debounce
+    )
   }
 
 
