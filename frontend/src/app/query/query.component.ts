@@ -5,6 +5,8 @@ import { DatarequestService } from '../datarequest.service';
 import { GooglePlaceDirective } from 'ngx-google-places-autocomplete';
 import { DatePipe } from '@angular/common'
 import { AirportService } from '../airport.service';
+import { debounce } from 'lodash';
+
 
 @Component({
   selector: 'app-query',
@@ -16,7 +18,9 @@ export class QueryComponent implements OnInit {
 
   searchModel = new Search('', '', '');
 
-  constructor(private dataService : DatarequestService, private router: Router, private datePipe: DatePipe, private airport: AirportService) { }
+  constructor(private dataService : DatarequestService, private router: Router, private datePipe: DatePipe, private airport: AirportService) {
+    this.airportSearch = debounce(this.airportSearch, 500);
+  }
 
   public lat = 0;
   public lng = 0;
@@ -39,10 +43,13 @@ export class QueryComponent implements OnInit {
     this.searchModel.holder = item.name
   }
 
+  
+
   public async airportSearch(query) {
     this.airport.getAirports(query)
     .subscribe(
       val => {
+        console.log(val)
         this.airportData = val
       }
       //need debounce

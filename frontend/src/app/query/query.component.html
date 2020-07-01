@@ -5,7 +5,7 @@
         <p>After typing an origin location, the tool finds airports within a 125 mile radius from you, then searches the cheapest flights to your specified destination and month of travel.</p>
     </div>
     <div class="xl-12 lg-12 md-12 sm-12">
-        <form #flightForm="ngForm" (ngSubmit)="onSubmit()">
+        <form #flightForm="ngForm" (ngSubmit)="onSubmit()" autocomplete="off">
             <div class="form-group">
                 <label>Location</label>
                 <input name="location" required class="form-control" placeholder="Raleigh, North Carolina" ngx-google-places-autocomplete #placesRef="ngx-places" (onAddressChange)="handleAddressChange($event)"/>
