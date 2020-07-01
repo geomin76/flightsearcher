@@ -43,16 +43,12 @@ export class QueryComponent implements OnInit {
     this.searchModel.holder = item.name
   }
 
-  
-
   public async airportSearch(query) {
     this.airport.getAirports(query)
     .subscribe(
       val => {
-        console.log(val)
         this.airportData = val
       }
-      //need debounce
     )
   }
 
@@ -67,10 +63,8 @@ export class QueryComponent implements OnInit {
 
   //need loading screen
   onSubmit() {
-    // console.log(this.searchModel);
     if (this.lat != 0 && this.lng != 0) {
       this.dataService.getFlights(this.lng, this.lat, this.searchModel.destination, this.searchModel.time).subscribe((data: any[]) => {
-        // console.log(data);
         this.dataService.flights = data;
         this.router.navigateByUrl('/results');
       })
