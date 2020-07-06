@@ -41,7 +41,7 @@ export class QueryComponent implements OnInit {
   public setQuery(item) {
     this.searchModel.destination = item.code
     this.searchModel.holder = item.name
-  }
+  } 
 
   public async airportSearch(query) {
     this.airport.getAirports(query)

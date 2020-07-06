@@ -9,6 +9,9 @@ const fetch = require("node-fetch");
 const { json } = require('express');
 
 
+// add new database values, current one sucks
+
+
 // const fs = require('fs')
 // const readLine = require('readline')
 
