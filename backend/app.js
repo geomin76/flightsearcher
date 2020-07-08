@@ -9,6 +9,7 @@ const fetch = require("node-fetch");
 const { json } = require('express');
 
 
+
 // add new database values, current one sucks
 
 
@@ -41,6 +42,11 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
     //need to create live search for mongodb in order to get live search
 
+    // app.get("/post", (req, res) => {
+    //     getData(db, "airportdata")
+    // })
+
+
     app.get('/search', (req, res) => {
         db.collection("airportdata").createIndex( { name: "text" } )
         // try to add indexes for country and code as well
@@ -59,7 +65,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
     app.get('/results', (req, res) => {
 
         // var results = [];
-        // db.collection("airportdata").createIndex( { location: "2dsphere" } )
+        db.collection("airportdata").createIndex( { location: "2dsphere" } )
         var codes = [];
         db.collection("airportdata").find(
             {
@@ -72,6 +78,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                 }
             }
         ).limit(5).toArray((err, result) => {
+            console.log(result)
             for (var i = 0; i < result.length; i++) {
                 codes.push(result[i].code)
             }
