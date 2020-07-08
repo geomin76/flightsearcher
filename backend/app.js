@@ -48,9 +48,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
 
 
     app.get('/search', (req, res) => {
-        db.collection("airportdata").createIndex( { name: "text" } )
-        // try to add indexes for country and code as well
-
+        db.collection("airportdata").createIndex( { name: "text", city: "text", country: "text" } )
         db.collection("airportdata").find({
             $text: {
                 $search: req.query.name
