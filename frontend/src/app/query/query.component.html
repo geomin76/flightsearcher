@@ -13,11 +13,13 @@
             <div class="form-group">
                 <label>Airport destination</label>
                 <input type="text" required name="destination" class="form-control" [(ngModel)]="searchModel.holder" (ngModelChange)="airportSearch($event)" placeholder="Seattle Tacoma International Airport">
-                <ul class="list-group">
-                    <li class="list-group-item" *ngFor="let airport of airportData" (click)="setQuery(airport)">
-                        {{ airport.name }}
-                    </li>
-                </ul>
+                <div [hidden]="myValue">
+                    <ul class="list-group">
+                        <li class="list-group-item" *ngFor="let airport of airportData" (click)="myValue=true" (click)="setQuery(airport)">
+                            {{ airport.name }}
+                        </li>
+                    </ul>
+                </div>
             </div>
             <div class="form-group">
                 <label>Month and year of travel</label>

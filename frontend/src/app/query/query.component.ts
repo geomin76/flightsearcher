@@ -30,6 +30,8 @@ export class QueryComponent implements OnInit {
   public postDate = '';
 
   public airportData = {}
+
+  public myValue = false
   
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class QueryComponent implements OnInit {
   } 
 
   public async airportSearch(query) {
+    this.myValue = false
     this.airport.getAirports(query)
     .subscribe(
       val => {
@@ -51,6 +54,7 @@ export class QueryComponent implements OnInit {
       }
     )
   }
+
 
 
   @ViewChild("placesRef") placesRef : GooglePlaceDirective;
