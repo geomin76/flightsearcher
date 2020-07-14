@@ -30,6 +30,32 @@ async function getData(db, collectionName) {
     console.log("done")
 }
 
+// FOR NEW DATA
+    async function getData(db, collectionName) {
+        var allData = [];
+        const fileStream = fs.createReadStream('newAirports.txt');
+    
+        const rl = readLine.createInterface({
+          input: fileStream,
+          crlfDelay: Infinity
+        });
+      
+        for await (const line of rl) {
+          var res = line.split(",");
+    
+    
+          db.collection(collectionName).insert({
+                name: res[0],
+                city: res[1],
+                country: res[2],
+                code: res[3],
+                location: { type: "Point", coordinates: [ parseFloat(res[5]), parseFloat(res[4]) ] }
+          })
+    
+        }
+        console.log("done")
+    }
+
 
 function getAirports(db, lng, lat) {
     var codes = [];
