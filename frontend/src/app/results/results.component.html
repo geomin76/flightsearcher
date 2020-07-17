@@ -9,13 +9,15 @@
         <ng-template #thenBlock>
             <ul class="ulList" *ngFor = "let flight of flights">
                 <li class="borderClass">
-                    <p>{{flight.origin}} -> {{flight.destination}}</p>
-                    <p>${{flight.price}} | Date: {{flight.outbound}} - {{flight.inbound}}</p>
-                    <div *ngFor = "let outbound of flight.outboundFlight">
-                        <p>Airline there: {{outbound}}</p>
-                    </div>
-                    <div *ngFor = "let inbound of flight.inboundFlight">
-                        <p>Airline back: {{inbound}}</p>
+                    <div class="flightInfoClass">
+                        <p>{{flight.origin}} -> {{flight.destination}}</p>
+                        <p>${{flight.price}} | Date: {{flight.outbound}} - {{flight.inbound}}</p>
+                        <div *ngFor = "let outbound of flight.outboundFlight">
+                            <p>Airline there: {{outbound}}</p>
+                        </div>
+                        <div *ngFor = "let inbound of flight.inboundFlight">
+                            <p>Airline back: {{inbound}}</p>
+                        </div>
                     </div>
                     <br>
                 </li>

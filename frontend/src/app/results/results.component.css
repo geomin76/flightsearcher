@@ -3,5 +3,15 @@
 }
 
 .borderClass {
-    
+    border: 1px solid lightgrey;
+    border-radius: 25px;
+}
+
+ul {
+    padding-inline-start: 0px;
+}
+
+.flightInfoClass {
+    padding: 10px;
+    padding-top: 40px;
 }
