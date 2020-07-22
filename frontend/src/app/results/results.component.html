@@ -2,6 +2,13 @@
     <div class="jumbotron">
         <h3>Cheap flight searcher</h3>
         <p>Here are your results</p>
+        <!-- <div id="clouds">
+            <div class="cloud x1"></div>
+            <div class="cloud x2"></div>
+            <div class="cloud x3"></div>
+            <div class="cloud x4"></div>
+            <div class="cloud x5"></div>
+        </div> -->
     </div>
     <div class="xl-12 lg-12 md-12 sm-12">
         <div *ngIf="flights.length > 0; then thenBlock; else elseBlock">
@@ -13,11 +20,14 @@
                         <p>{{flight.origin}} -> {{flight.destination}}</p>
                         <p>${{flight.price}} | Date: {{flight.outbound}} - {{flight.inbound}}</p>
                         <div *ngFor = "let outbound of flight.outboundFlight">
-                            <p>Airline there: {{outbound}}</p>
+                            <!-- <p>Airline there: {{outbound}}</p> -->
+                            <div *ngFor = "let inbound of flight.inboundFlight">
+                                <p class="smaller">Departing airline: {{outbound}} | Arriving airline: {{inbound}}</p>
+                            </div>
                         </div>
-                        <div *ngFor = "let inbound of flight.inboundFlight">
+                        <!-- <div *ngFor = "let inbound of flight.inboundFlight">
                             <p>Airline back: {{inbound}}</p>
-                        </div>
+                        </div> -->
                     </div>
                     <br>
                 </li>
