@@ -1,5 +1,4 @@
 const fetch = require("node-fetch");
-var secrets = require('./secrets.js');
 const fs = require('fs')
 const readLine = require('readline')
 

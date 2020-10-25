@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-var secrets = require('./secrets.js');
 var service = require("./service");
 const { MongoClient } = require('mongodb');
 var GeoJSON = require('geojson');
