@@ -22,32 +22,11 @@ app.get('/', (req, res) => {
     res.send("Hello, World!")
 })
 
-
-//this method connects with mongodb database, checks with a lng/lat the closest airports near that lng/lat and returns the data
-const connectionString = "mongodb+srv://" + secrets.user + ":" + secrets.pass +"@" + secrets.cluster + "/test?retryWrites=true&w=majority"
-MongoClient.connect(connectionString, { useUnifiedTopology: true })
-  .then(client => {
-    console.log('Connected to Database')
-    const db = client.db('airport');
-
-    // service.getData(db, "airportdata")
-
-    // this "2dsphere" indexing allows distance to be calculated by sphere distance rather than straight line distance
-    // db.collection("airportdata").createIndex( { location: "2dsphere" } )
-
-
-    // http://localhost:3000/results?lng=[]&lat=[]&destination=LAX&outbound=2020-10&inbound=2020-10
-
-    //need to add airport origin and destination to data 
-
-    //need to create live search for mongodb in order to get live search
-
-    // app.get("/post", (req, res) => {
-    //     getData(db, "airportdata")
-    // })
-
-
-    app.get('/search', (req, res) => {
+app.get('/search', (req, res) => {
+    const connectionString = "mongodb+srv://" + process.env.USER + ":" + process.env.PASS +"@" + process.env.CLUSTER + "/test?retryWrites=true&w=majority"
+    MongoClient.connect(connectionString, { useUnifiedTopology: true })
+    .then(client => {
+        const db = client.db('airport');
         db.collection("airportdata").createIndex( { name: "text", city: "text", country: "text" } )
         db.collection("airportdata").find({
             $text: {
@@ -57,12 +36,16 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
             res.json(result)
             console.log(result)
         })
-        // res.send("done")
     })
+})
 
-    app.get('/results', (req, res) => {
 
-        // var results = [];
+app.get('/results', (req, res) => {
+    const connectionString = "mongodb+srv://" + process.env.USER + ":" + process.env.PASS +"@" + process.env.CLUSTER + "/test?retryWrites=true&w=majority"
+    MongoClient.connect(connectionString, { useUnifiedTopology: true })
+    .then(client => {
+        const db = client.db('airport');
+
         db.collection("airportdata").createIndex( { location: "2dsphere" } )
         var codes = [];
         db.collection("airportdata").find(
@@ -93,7 +76,7 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
             }
             requiredHeaders = {
                 "x-rapidapi-host": "skyscanner-skyscanner-flight-search-v1.p.rapidapi.com",
-                "x-rapidapi-key": secrets.key,
+                "x-rapidapi-key": process.env.KEY,
                 "useQueryString": true
             }
 
@@ -141,7 +124,6 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                                 }
                                 
                                 
-                
                                 var flightInfo = {
                                     price: texts[i].Quotes[j].MinPrice,
                                     direct: texts[i].Quotes[j].Direct,
@@ -164,17 +146,17 @@ MongoClient.connect(connectionString, { useUnifiedTopology: true })
                     // console.log(results.slice(0, 15));
                     res.json(results.slice(0, 15))
                 })
-        })    
+        })  
+
     })
-
 })
 
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`App listening on port ${PORT}`);
-    console.log('Run http://localhost:3000')
-    console.log('Press Ctrl+C to quit.');
-})
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//     console.log(`App listening on port ${PORT}`);
+//     console.log('Run http://localhost:3000')
+//     console.log('Press Ctrl+C to quit.');
+// })
 
 module.exports = app;
